@@ -13,13 +13,18 @@ public class Database {
     String className = "org.mariadb.jdbc.Driver";
 
     public Database() {
-        // Employee employee = new Employee(1,"Marduk Árpád","Miskolc", 395.0);
-        // this.insertEmployee(employee);
-        // ArrayList<Employee> emplist = this.getEmployees();
-        // emplist.forEach((employee)->{
-        //     System.out.println(employee.name);
-        // });
-        
+
+    }
+
+    public Connection createConnection(String url, String className) throws SQLException, ClassNotFoundException{
+        Connection connection = null;
+        Class.forName(className);
+        connection = DriverManager.getConnection(url, "hum", "titok");
+        return connection;
+    }   
+
+    public void closeConnection(Connection connection) throws SQLException{
+        connection.close();
     }
     
     public void insertEmployee(Employee employee){
@@ -31,12 +36,7 @@ public class Database {
             System.err.println("Nincs mariadb betöltve");
         }
     }
-    public Connection createConnection(String url, String className) throws SQLException, ClassNotFoundException{
-        Connection connection = null;
-        Class.forName(className);
-        connection = DriverManager.getConnection(url, "hum", "titok");
-        return connection;
-    }   
+    
     public void tryInsertEmployee(Employee employee) throws SQLException, ClassNotFoundException{
         Connection connection = createConnection(url,className);
         String sql = "INSERT INTO employees" + "(name, city, salary) VALUES" + "(?, ?, ?)";
@@ -46,8 +46,9 @@ public class Database {
         preparedStatement.setDouble(3, employee.salary);
         preparedStatement.execute();
         System.out.println(preparedStatement.toString());
-        connection.close();
+        closeConnection(connection);
     }
+    
     public ArrayList<Employee> getEmployees(){
         ArrayList<Employee> empList;
         try {
@@ -67,7 +68,9 @@ public class Database {
         ResultSet res = statement.executeQuery(sql);
         ArrayList<Employee> empList = convResSetToList(res);
 
+        closeConnection(connection);
         return empList;
+        
     }
 
     public ArrayList<Employee> convResSetToList(ResultSet res) throws SQLException{
@@ -78,5 +81,6 @@ public class Database {
             empList.add(emp);
         }
         return empList;
+        
     }
 }
