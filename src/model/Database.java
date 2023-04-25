@@ -3,13 +3,23 @@ package model;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 
 public class Database {
+    String url = "jdbc:mariadb://localhost:3306/hum";
+    String className = "org.mariadb.jdbc.Driver";
 
     public Database() {
-        Employee employee = new Employee(1,"Marduk Árpád","Miskolc", 395.0);
-        this.insertEmployee(employee);
+        // Employee employee = new Employee(1,"Marduk Árpád","Miskolc", 395.0);
+        // this.insertEmployee(employee);
+        // ArrayList<Employee> emplist = this.getEmployees();
+        // emplist.forEach((employee)->{
+        //     System.out.println(employee.name);
+        // });
+        
     }
     
     public void insertEmployee(Employee employee){
@@ -21,22 +31,52 @@ public class Database {
             System.err.println("Nincs mariadb betöltve");
         }
     }
-
-    public void tryInsertEmployee(Employee employee) throws SQLException, ClassNotFoundException{
-        
+    public Connection createConnection(String url, String className) throws SQLException, ClassNotFoundException{
         Connection connection = null;
-        String url = "jdbc:mariadb://localhost:3306/hum";
-        Class.forName("org.mariadb.jdbc.Driver");
+        Class.forName(className);
         connection = DriverManager.getConnection(url, "hum", "titok");
-        //'Kiss Pali', 'Szeged', 347
+        return connection;
+    }   
+    public void tryInsertEmployee(Employee employee) throws SQLException, ClassNotFoundException{
+        Connection connection = createConnection(url,className);
         String sql = "INSERT INTO employees" + "(name, city, salary) VALUES" + "(?, ?, ?)";
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         preparedStatement.setString(1, employee.name);
         preparedStatement.setString(2, employee.city);
         preparedStatement.setDouble(3, employee.salary);
-        //preparedStatement.execute();
+        preparedStatement.execute();
         System.out.println(preparedStatement.toString());
-        System.out.println("BU!");
         connection.close();
+    }
+    public ArrayList<Employee> getEmployees(){
+        ArrayList<Employee> empList;
+        try {
+            empList = tryGetEmployees();
+        } catch (Exception e) {
+            System.err.println("Hiba a dolgozók beolvasásában"+ e);
+            empList = null;
+        }
+        return empList;
+    }
+
+    public ArrayList<Employee> tryGetEmployees() throws SQLException, ClassNotFoundException{
+        
+        Connection connection = createConnection(url, className);
+        String sql = "SELECT * FROM employees";
+        Statement statement = connection.createStatement();
+        ResultSet res = statement.executeQuery(sql);
+        ArrayList<Employee> empList = convResSetToList(res);
+
+        return empList;
+    }
+
+    public ArrayList<Employee> convResSetToList(ResultSet res) throws SQLException{
+        ArrayList<Employee> empList = new ArrayList<>();
+        while(res.next()){
+            
+            Employee emp = new Employee(res.getInt("id"), res.getString("name"), res.getString("city"), res.getDouble("salary"));
+            empList.add(emp);
+        }
+        return empList;
     }
 }
