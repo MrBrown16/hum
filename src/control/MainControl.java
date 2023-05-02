@@ -31,12 +31,14 @@ public class MainControl{
     private void startDel(){
         JTable table = mainFrame.getTable();
         int row = table.getSelectedRow();
-        
-        String v = (String) table.getModel().getValueAt(row, 0);
-        Integer value = Integer.parseInt(v);
-        boolean done = database.delEmployees(value);
+        if (row != -1) {
+            String v = (String) table.getModel().getValueAt(row, 0);
+            Integer value = Integer.parseInt(v);
+            boolean done = database.delEmployees(value);
 
-        mainFrame.getModel().removeRow(row);
+            mainFrame.getModel().removeRow(row);
+        }
+        
     }
     
 

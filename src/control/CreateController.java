@@ -1,6 +1,9 @@
 package control;
 
+import java.util.Vector;
+
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 import model.Database;
 import model.Employee;
@@ -21,20 +24,30 @@ public class CreateController {
     
     private void handleEvents(){
         createFrame.getAddButton().addActionListener(e->{
-            startAdd();
+            startAdd(mainFrame.getModel());
         });
     }
     
-    private void startAdd(){
+    private void startAdd(DefaultTableModel model){
         String idStr = createFrame.getIdPanel().getValue();
         String nameStr = createFrame.getNamePanel().getValue();
         String cityStr = createFrame.getCityPanel().getValue();
         String salaryStr = createFrame.getSalaryPanel().getValue();
-        
-        Employee emp = new Employee(Integer.parseInt(idStr), nameStr, cityStr, Double.parseDouble(salaryStr));
+        Vector<String> empStr = new Vector<>();
+        // empStr.add(idStr)
+        // model.
+        //TODO: set the table to show the added row without restarting 
+        Employee emp = new Employee(nameStr, cityStr, Double.parseDouble(salaryStr));
         database.insertEmployee(emp);
         JOptionPane.showMessageDialog(createFrame, "Done");
-        
+        setToEmpty();
+    }
+
+    private void setToEmpty() {
+        createFrame.getIdPanel().setValue("");
+        createFrame.getNamePanel().setValue("");
+        createFrame.getCityPanel().setValue("");
+        createFrame.getSalaryPanel().setValue("");
     }
     public CreateFrame getCreateFrame() {
         return createFrame;
