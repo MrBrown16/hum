@@ -13,7 +13,6 @@ public class Database {
     String className = "org.mariadb.jdbc.Driver";
 
     public Database() {
-
     }
 
     public Connection createConnection(String url, String className) throws SQLException, ClassNotFoundException{
@@ -27,6 +26,7 @@ public class Database {
         connection.close();
     }
     
+
     public void insertEmployee(Employee employee){
         try {
             tryInsertEmployee(employee);
@@ -49,6 +49,8 @@ public class Database {
         closeConnection(connection);
     }
     
+
+
     public ArrayList<Employee> getEmployees(){
         ArrayList<Employee> empList;
         try {
@@ -72,6 +74,33 @@ public class Database {
         return empList;
         
     }
+
+
+
+    public boolean delEmployees(Integer id){
+        boolean done = false;
+        try {
+            done = tryDelEmployees(id);
+        } catch (Exception e) {
+            System.err.println("Hiba a record törlésében"+ e);
+        }
+        return done;
+    }
+
+    public boolean tryDelEmployees(Integer id) throws SQLException, ClassNotFoundException{
+        
+        Connection connection = createConnection(url, className);
+        String sql = "DELETE FROM employees WHERE id=?";
+        
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        preparedStatement.setInt(1,id);
+        boolean done = preparedStatement.execute();
+        closeConnection(connection);
+        
+        return done;
+    }
+
+
 
     public ArrayList<Employee> convResSetToList(ResultSet res) throws SQLException{
         ArrayList<Employee> empList = new ArrayList<>();

@@ -6,6 +6,7 @@ import java.util.Vector;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
@@ -14,14 +15,15 @@ import model.Database;
 import model.Employee;
 
 public class MainFrame extends JFrame {
-
-    DefaultTableModel model;
-    JTable table;
-    JScrollPane pane;
-    Database database;
-    JButton addButton;
     
-
+    DefaultTableModel model;
+    JScrollPane pane;
+    JTable table;
+    Database database;
+    JPanel buttonPanel;
+    JButton addButton;
+    JButton delButton;
+    
     public MainFrame() {        
         this.initComponent();
         
@@ -29,16 +31,21 @@ public class MainFrame extends JFrame {
         this.setFrame();
     }
     private void initComponent(){
-        this.model = new DefaultTableModel();
-        this.table = new JTable(model);
-        this.pane = new JScrollPane(table);
-        this.database = new Database();
-        this.addButton = new JButton("Add");
+        model = new DefaultTableModel();
+        table = new JTable(model);
+        pane = new JScrollPane(table);
+        database = new Database();
+        buttonPanel = new JPanel();
+        addButton = new JButton("Add");
+        delButton = new JButton("Del");
     }
     private void setFrame(){
         this.setLayout(new BoxLayout(getContentPane(), BoxLayout.PAGE_AXIS));
         this.add(pane);
-        this.add(addButton);
+        buttonPanel.add(addButton);
+        buttonPanel.add(delButton);
+        buttonPanel.setLayout(new BoxLayout(buttonPanel,BoxLayout.LINE_AXIS));
+        this.add(buttonPanel);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(400, 300);
         this.setVisible(true);
@@ -46,9 +53,9 @@ public class MainFrame extends JFrame {
     private void setComponent(){
         Object[] labels = {"id", "name", "city", "salary"};
         this.model.setColumnIdentifiers(labels);
-
+        
         ArrayList<Employee> empList = database.getEmployees();
-
+        
         for(Employee emp: empList){
             Vector<String> empStr = new Vector<>();
             empStr.add(emp.getId().toString());
@@ -64,6 +71,16 @@ public class MainFrame extends JFrame {
     public void setAddButton(JButton addButton) {
         this.addButton = addButton;
     }
-    
-
+    public JPanel getButtonPanel() {
+        return buttonPanel;
+    }
+    public JButton getDelButton() {
+        return delButton;
+    }
+    public JTable getTable() {
+        return table;
+    }
+    public DefaultTableModel getModel() {
+        return model;
+    }
 }

@@ -16,17 +16,21 @@ public class CreateFrame extends JDialog{
     
     public CreateFrame(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
-        addPanel();
-        
+        initAddPanel();
+        setAddPanel();
     }
 
-    private void addPanel(){
+    private void initAddPanel(){
         this.idPanel = new InputPanel("Id: ");
         this.namePanel = new InputPanel("Name: ");
         this.cityPanel = new InputPanel("City: ");
         this.salaryPanel = new InputPanel("Salary: ");
         addButton = new JButton("Add");
         
+        
+    }
+
+    private void setAddPanel() {
         this.setLayout(new BoxLayout(getContentPane(), BoxLayout.PAGE_AXIS));
         this.add(this.idPanel);
         this.add(this.namePanel);
