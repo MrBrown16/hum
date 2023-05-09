@@ -5,6 +5,8 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
+import model.Employee;
+
 public class CreateFrame extends JDialog{
     MainFrame mainFrame;
     InputPanel idPanel;
@@ -12,7 +14,7 @@ public class CreateFrame extends JDialog{
     InputPanel cityPanel;
     InputPanel salaryPanel;
     JPanel jPanel;
-    JButton addButton;
+    JButton saveButton;
     
     public CreateFrame(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
@@ -21,11 +23,11 @@ public class CreateFrame extends JDialog{
     }
 
     private void initAddPanel(){
-        this.idPanel = new InputPanel("Id: ");
-        this.namePanel = new InputPanel("Name: ");
-        this.cityPanel = new InputPanel("City: ");
-        this.salaryPanel = new InputPanel("Salary: ");
-        addButton = new JButton("Add");
+        idPanel = new InputPanel("Id: ");
+        namePanel = new InputPanel("Name: ");
+        cityPanel = new InputPanel("City: ");
+        salaryPanel = new InputPanel("Salary: ");
+        saveButton = new JButton("Save");
         
         
     }
@@ -36,14 +38,21 @@ public class CreateFrame extends JDialog{
         this.add(this.namePanel);
         this.add(this.cityPanel);
         this.add(this.salaryPanel);
-        this.add(addButton);
+        this.add(saveButton);
         this.setSize(200, 150);
         this.setModal(true);
-        this.setLocationRelativeTo(this.mainFrame);
+        this.setLocationRelativeTo(mainFrame);
     }
     
-    public JButton getAddButton() {
-        return addButton;
+    public void setEmployee(Employee employee){
+        idPanel.field.setText(employee.getId().toString());
+        namePanel.field.setText(employee.getName());
+        cityPanel.field.setText(employee.getCity());
+        salaryPanel.field.setText(employee.getSalary().toString());
+    }
+
+    public JButton getSaveButton() {
+        return saveButton;
     }
     public InputPanel getIdPanel() {
         return idPanel;

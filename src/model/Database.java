@@ -27,26 +27,37 @@ public class Database {
     }
     
 
-    public void insertEmployee(Employee employee){
+    public int insertEmployee(Employee employee){
+        int id = 0;
         try {
-            tryInsertEmployee(employee);
+            id = tryInsertEmployee(employee);
+            
         } catch (SQLException e) {
-            System.err.println("Hiba az adatbázishoz való kapcsolódás sikertelen");
+            System.err.println("Hiba az adatbázishoz való kapcsolódás sikertelen"+ e.getMessage());
         } catch (ClassNotFoundException e){
             System.err.println("Nincs mariadb betöltve");
         }
+        return id;
     }
     
-    public void tryInsertEmployee(Employee employee) throws SQLException, ClassNotFoundException{
+    private int tryInsertEmployee(Employee employee) throws SQLException, ClassNotFoundException{
         Connection connection = createConnection(url,className);
         String sql = "INSERT INTO employees" + "(name, city, salary) VALUES" + "(?, ?, ?)";
-        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         preparedStatement.setString(1, employee.name);
         preparedStatement.setString(2, employee.city);
         preparedStatement.setDouble(3, employee.salary);
-        preparedStatement.execute();
-        System.out.println(preparedStatement.toString());
+        preparedStatement.executeUpdate();
+        ResultSet rs = preparedStatement.getGeneratedKeys();
+        int id = 0;
+        if (rs.next()) {
+            id = rs.getInt(1);
+            // System.out.println(preparedStatement.toString());
+            // System.out.println(id);
+        }
+
         closeConnection(connection);
+        return id;
     }
     
 
@@ -62,7 +73,7 @@ public class Database {
         return empList;
     }
 
-    public ArrayList<Employee> tryGetEmployees() throws SQLException, ClassNotFoundException{
+    private ArrayList<Employee> tryGetEmployees() throws SQLException, ClassNotFoundException{
         
         Connection connection = createConnection(url, className);
         String sql = "SELECT * FROM employees";
@@ -87,7 +98,7 @@ public class Database {
         return done;
     }
 
-    public boolean tryDelEmployees(Integer id) throws SQLException, ClassNotFoundException{
+    private boolean tryDelEmployees(Integer id) throws SQLException, ClassNotFoundException{
         
         Connection connection = createConnection(url, className);
         String sql = "DELETE FROM employees WHERE id=?";
@@ -102,7 +113,7 @@ public class Database {
 
 
 
-    public ArrayList<Employee> convResSetToList(ResultSet res) throws SQLException{
+    private ArrayList<Employee> convResSetToList(ResultSet res) throws SQLException{
         ArrayList<Employee> empList = new ArrayList<>();
         while(res.next()){
             
@@ -111,5 +122,28 @@ public class Database {
         }
         return empList;
         
+    }
+
+    public void update(Employee emp){
+        try {
+            tryUpdate(emp);
+        } catch (SQLException e) {
+            System.err.println("Hiba az update során " + e);
+        }catch(Exception e){
+            System.err.println("Hiba az update során " + e);
+        }
+    }
+
+    private void tryUpdate(Employee emp) throws ClassNotFoundException, SQLException{
+
+        Connection connection = createConnection(url, className);
+        String sql = "UPDATE employees SET " + "name=?, city=?, salary=? " + "WHERE id=?";
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        preparedStatement.setString(1, emp.name);
+        preparedStatement.setString(2, emp.city);
+        preparedStatement.setDouble(3, emp.salary);
+        preparedStatement.setInt(4, emp.id);
+        preparedStatement.execute();
+        closeConnection(connection);
     }
 }

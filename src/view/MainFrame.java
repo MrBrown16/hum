@@ -23,6 +23,7 @@ public class MainFrame extends JFrame {
     JPanel buttonPanel;
     JButton addButton;
     JButton delButton;
+    JButton editButton;
     
     public MainFrame() {        
         this.initComponent();
@@ -38,12 +39,14 @@ public class MainFrame extends JFrame {
         buttonPanel = new JPanel();
         addButton = new JButton("Add");
         delButton = new JButton("Del");
+        editButton = new JButton("Edit");
     }
     private void setFrame(){
         this.setLayout(new BoxLayout(getContentPane(), BoxLayout.PAGE_AXIS));
         this.add(pane);
         buttonPanel.add(addButton);
         buttonPanel.add(delButton);
+        buttonPanel.add(editButton);
         buttonPanel.setLayout(new BoxLayout(buttonPanel,BoxLayout.LINE_AXIS));
         this.add(buttonPanel);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -76,6 +79,9 @@ public class MainFrame extends JFrame {
     }
     public JButton getDelButton() {
         return delButton;
+    }
+    public JButton getEditButton() {
+        return editButton;
     }
     public JTable getTable() {
         return table;
